@@ -12,8 +12,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 class Meetup {
-  constructor(id, title, date, description, creator, picture) {
-    this.id = id,
+  constructor(title, date, description, creator, picture) {
+    this.id = meetupArray.length + 1,
     this.title = title,
     this.date  = title,
     this.description = description,
@@ -24,7 +24,7 @@ class Meetup {
 
 class Attendee {
   constructor(id, name, picture, meeting_id) {
-    this.id = id,
+    this.id = attendeeArray.length + 1,
     this.name = name,
     this.picture = picture,
     this.meeting_id = meeting_id
@@ -33,7 +33,7 @@ class Attendee {
 
 class Comment {
   constructor(id, meeting_id, poster, body) {
-    this.id = id,
+    this.id = commentArray.length + 1,
     this.meeting_id = meeting_id,
     this.poster = poster,
     this.body = body
@@ -41,24 +41,24 @@ class Comment {
 }
 
 let meetupArray = [];
+let attendeeArray = [];
+let commentArray = [];
 
 app.use(morgan());
 app.use(express.static(path.join(__dirname, 'frontend','build')));
 
 app.post('/meetup', (req, res, next) => {
-  console.log(req.body);
-  const newMeetup = new Meetup(req.body.id, req.body.title, req.body.date, req.body.description, req.body.creator, req.body.picture)
+  const newMeetup = new Meetup(req.body.title, req.body.date, req.body.description, req.body.creator, req.body.picture)
   meetupArray.push(newMeetup);
-  res.send(newMeetup);
+  return res.send(newMeetup);
 });
 
 app.get('/meetups', (req, res, next) => {
-  console.log('hello world');
   return res.send(meetupArray);
 });
 
 app.get('/meetup/:id', (req, res, next) => {
-  res.send('testing');
+  res.send(meetupArray.find(x => x.id == req.params.id));
 });
 
 app.use('*', (req, res, next)=>{
