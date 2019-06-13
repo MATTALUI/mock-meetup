@@ -23,7 +23,7 @@ class Meetup {
 };
 
 class Attendee {
-  constructor(id, name, picture, meeting_id) {
+  constructor(name, picture, meeting_id) {
     this.id = attendeeArray.length + 1,
     this.name = name,
     this.picture = picture,
@@ -32,7 +32,7 @@ class Attendee {
 };
 
 class Comment {
-  constructor(id, meeting_id, poster, body) {
+  constructor(meeting_id, poster, body) {
     this.id = commentArray.length + 1,
     this.meeting_id = meeting_id,
     this.poster = poster,
@@ -47,6 +47,7 @@ let commentArray = [];
 app.use(morgan());
 app.use(express.static(path.join(__dirname, 'frontend','build')));
 
+// Meetup Routes
 app.post('/meetup', (req, res, next) => {
   const newMeetup = new Meetup(req.body.title, req.body.date, req.body.description, req.body.creator, req.body.picture)
   meetupArray.push(newMeetup);
@@ -61,10 +62,39 @@ app.get('/meetup/:id', (req, res, next) => {
   res.send(meetupArray.find(x => x.id == req.params.id));
 });
 
+// Attendee Routes
+app.post('/attendee', (req, res, next) => {
+  const newAttendee = new Attendee(req.body.name, req.body.picture, req.body.meeting_id)
+  attendeeArray.push(newAttendee);
+  return res.send(newAttendee);
+});
+
+app.get('/attendees', (req, res, next) => {
+  return res.send(attendeeArray);
+});
+
+app.get('/attendee/:id', (req, res, next) => {
+  res.send(attendeeArray.find(x => x.id == req.params.id));
+});
+
+// Comment Routes
+app.post('/comment', (req, res, next) => {
+  const newComment = new Comment(req.body.meeting_id, req.body.poster, req.body.body)
+  commentArray.push(newComment);
+  return res.send(commentArray);
+});
+
+app.get('/comments', (req, res, next) => {
+  return res.send(newComment);
+});
+
+app.get('/comment/:id', (req, res, next) => {
+  res.send(newComment.find(x => x.id == req.params.id));
+});
+
 app.use('*', (req, res, next)=>{
   return res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
 });
-
 
 app.listen(port, '0.0.0.0', ()=>{
   console.log('listening on port: ', port);
